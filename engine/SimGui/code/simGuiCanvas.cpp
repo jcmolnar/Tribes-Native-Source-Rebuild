@@ -1009,10 +1009,12 @@ void Canvas::render()
       updateUnion.lowerR.x--;
       updateUnion.lowerR.y--;
 
+      extern void ScriptGL_renderHook(SimObject *ctrl, GFXSurface *srf);   // NATIVE-PORT: scriptGL.cpp
       for(ct = contentControlStack.begin(); ct != contentControlStack.end(); ct++)
       {
          srf->setClipRect(&updateUnion);
          (*ct)->onRender(srf, offset, &screenRect);
+         ScriptGL_renderHook(*ct, srf);   // NATIVE-PORT: ScriptGL / Kronos HUD overlay
       }
       if(editControl)
       {

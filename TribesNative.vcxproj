@@ -241,6 +241,7 @@
     <ClCompile Include="engine\SimGui\code\simGuiBase.cpp" />
     <ClCompile Include="engine\SimGui\code\simGuiBitmapBox.cpp" />
     <ClCompile Include="engine\SimGui\code\simGuiBitmapCtrl.cpp" />
+    <ClCompile Include="engine\SimGui\code\scriptGL.cpp" />
     <ClCompile Include="engine\SimGui\code\simGuiCanvas.cpp" />
     <ClCompile Include="engine\SimGui\code\simGuiComboBox.cpp" />
     <ClCompile Include="engine\SimGui\code\simGuiCtrl.cpp" />
