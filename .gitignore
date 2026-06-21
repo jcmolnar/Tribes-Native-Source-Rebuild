@@ -1,0 +1,25 @@
+# MSVC / native build output
+/bin/
+/obj/
+.vs/
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.iobj
+*.ipdb
+*.pch
+*.exe
+*.dll
+*.lib
+*.exp
+*.map
+*.tlog
+*.lastbuildstate
+*.VC.db
+*.VC.opendb
+
+# build + debug logs / scratch
+*.log
+_dbg/crash*.txt
+_dbg/*.txt
