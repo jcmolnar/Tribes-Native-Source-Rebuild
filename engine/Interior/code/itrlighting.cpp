@@ -169,7 +169,6 @@ inline void readSize(StreamIO& s,
 {
    Int32 size;
    s.read(&size);
-   { FILE* _f=fopen("C:\\Dynamix\\Tribes\\itr_diag.log","a"); if(_f){ fprintf(_f,"  readSize=%d (elemsz=%d)\n", size, (int)sizeof(typename T::value_type)); fclose(_f);} }   // NATIVE-PORT diag (temp)
    array.setSize(size);
 }
 
@@ -222,7 +221,6 @@ ITRLighting::read(StreamIO& s,
 {
    AssertFatal(version == FileVersion || version == 6,
                "ITRLighting::read: Incorrect file version");
-   { FILE* _f=fopen("C:\\Dynamix\\Tribes\\itr_diag.log","a"); if(_f){ fprintf(_f,"ITRLighting::read version=%d (FileVersion=%d)\n", version, FileVersion); fclose(_f);} }   // NATIVE-PORT diag (temp)
 
    // Header, or in memory data first.
    s.read(&geometryBuildId);

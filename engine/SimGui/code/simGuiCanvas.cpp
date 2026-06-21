@@ -1614,7 +1614,6 @@ void Canvas::onMouseMove(const Event &theEvent)
 
 void Canvas::onMouseMove(int x, int y, UINT keyFlags)
 {
-   { static int _n=0; if(_n<8){ RECT _rc; GetClientRect(getHandle(),&_rc); int _gx=-1,_gy=-1; if(topContentControl){ Point2I _g=topContentControl->getExtent(); _gx=_g.x; _gy=_g.y; } FILE* _f=fopen("C:\\Dynamix\\Tribes\\mouse_diag.log","a"); if(_f){ fprintf(_f,"onMouseMove x=%d y=%d client=%dx%d gui=%dx%d\n", x,y,(int)(_rc.right-_rc.left),(int)(_rc.bottom-_rc.top),_gx,_gy); fclose(_f);} _n++; } }   // NATIVE-PORT diag (temp)
    if ( (!canvasCursorTrapped || !isFullScreen() || (GWMap::getWindowCount()>1)) && !cursorOverApp && !g_prefPoliteGui)
    {
       cursorOverApp = true;

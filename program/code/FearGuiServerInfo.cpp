@@ -38,7 +38,6 @@ void ServerInfoCtrl::onWake(void)
 void ServerInfoCtrl::setServerInfo(FearCSDelegate::ServerInfo *info)
 {
    mServer = info;
-   { FILE* _f=fopen("C:\\Dynamix\\Tribes\\info_diag.log","a"); if(_f){ fprintf(_f,"setServerInfo: rows=%d teamHdg='%s'\n", mServer->mInfoList.size(), mServer->teamScoreHeading); fclose(_f);} }   // NATIVE-PORT diag (temp)
 
    int stop = 1;
    teamTabStops[0] = 0;

@@ -989,7 +989,6 @@ void FearCSDelegate::gotGameInfo(const GameInfo &gameInfo)
       lenPtr = bstream.getBytePtr();
       lengthToRead = gameInfo.dataSize - (lenPtr - &gameInfo.data[0]);
    }
-   { FILE* _f=fopen("C:\\Dynamix\\Tribes\\info_diag.log","a"); if(_f){ fprintf(_f,"getGameInfo name='%s' dataSize=%d teamHdg='%s' clientHdg='%s' rows=%d\n", newServer->name, gameInfo.dataSize, newServer->teamScoreHeading, newServer->clientScoreHeading, newServer->mInfoList.size()); fclose(_f);} }   // NATIVE-PORT diag (temp)
 
    //signal the server list of incoming
    if (cg.gameServerList)

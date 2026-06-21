@@ -643,7 +643,6 @@ void FuncCallExprNode::eval(ExprEvalState *state)
       state->alloc(6);
       strcpy(state->baseAddr + state->curIndex, "False");
       state->console->printf("%s: Unknown command.", funcName);
-      { FILE* _cf = fopen("C:\\Dynamix\\Tribes\\cmddbg.log","a"); if(_cf){ fprintf(_cf,"UNKNOWN-FN: %s\n", funcName); fclose(_cf);} }   // NATIVE-PORT diag (temp)
    }
    else if(ent->func)
    {

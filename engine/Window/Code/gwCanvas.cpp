@@ -7,7 +7,6 @@
 // $Modtime $
 //
 //--------------------------------------------------------------------------------
-#include <stdio.h>   // NATIVE-PORT: temp device-switch diagnostics
 #include "gwBase.h"
 #include "gwCanvas.h"
 #include "gwDeviceManager.h"
@@ -173,7 +172,6 @@ bool GWCanvas::setFullscreenDevice(const char *name)
    GFXPalette *palette = NULL;
    DWORD flags         = 0;
 
-   { FILE* _f=fopen("C:\\Dynamix\\Tribes\\renderdbg.log","a"); if(_f){ const char* _c = current?getDeviceName(current->getDeviceId()):"(none)"; fprintf(_f,"setFullscreenDevice req='%s' cur='%s'\n", name?name:"(null)", _c?_c:"(null)"); fclose(_f);} }   // NATIVE-PORT diag (temp)
 
    if(!deviceManager.deviceNameValid(name))
       return false;
@@ -233,7 +231,6 @@ bool GWCanvas::setWindowedDevice(const char *name)
    GFXPalette *palette = NULL;
    DWORD flags         = 0;
 
-   { FILE* _f=fopen("C:\\Dynamix\\Tribes\\renderdbg.log","a"); if(_f){ const char* _c = current?getDeviceName(current->getDeviceId()):"(none)"; fprintf(_f,"setWindowedDevice req='%s' cur='%s'\n", name?name:"(null)", _c?_c:"(null)"); fclose(_f);} }   // NATIVE-PORT diag (temp)
 
    if(!deviceManager.deviceNameValid(name))
       return false;

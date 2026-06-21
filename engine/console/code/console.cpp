@@ -580,7 +580,6 @@ const char *CMDConsole::execute(int argc, const char **argv, int privilegeLevel)
       gEvalState.alloc(6);
       strcpy(gEvalState.baseAddr + gEvalState.curIndex, "False");
       printf("%s: Unknown command.", argv[0]);
-      { FILE* _cf = fopen("C:\\Dynamix\\Tribes\\cmddbg.log","a"); if(_cf){ fprintf(_cf,"UNKNOWN-CMD: %s\n", argv[0]); fclose(_cf);} }   // NATIVE-PORT diag (temp)
    }
    else if(ent->func)
    {

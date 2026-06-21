@@ -117,7 +117,6 @@ Surface::create(HWND        io_clientWnd,
    AssertFatal(io_clientWnd != NULL, "No client window handle");
 
    Surface* pRetSurf = new Surface;
-   { FILE*_lf=fopen("C:\\Dynamix\\Tribes\\ogldbg.log","a"); if(_lf){ fprintf(_lf,"[OGL] Surface::create ENTRY w=%d h=%d wnd=%p\n", in_width, in_height, (void*)io_clientWnd); fclose(_lf);} }
 
 // WASM-PORT: the browser canvas can't switch display modes; skip the whole
 // fullscreen EnumDisplaySettings/ChangeDisplaySettings/SetWindowPos dance
@@ -235,7 +234,6 @@ Surface::create(HWND        io_clientWnd,
       return NULL;
    }
    pRetSurf->m_glrcMadeCurrent = true;
-   { FILE*_lf=fopen("C:\\Dynamix\\Tribes\\ogldbg.log","a"); if(_lf){ fprintf(_lf,"[OGL] ctx made current; hDC=%p hGLRC=%p\n", (void*)pRetSurf->m_hDC, (void*)pRetSurf->m_hGLRC); fclose(_lf);} }
 
    // Retreive the strings associated with this driver, they are useful
    //  for debugging and such...
@@ -244,7 +242,6 @@ Surface::create(HWND        io_clientWnd,
    const char* pRenderer   = (const char*)glGetString(GL_RENDERER);
    const char* pVersion    = (const char*)glGetString(GL_VERSION);
    const char* pExtensions = (const char*)glGetString(GL_EXTENSIONS);
-   { FILE*_lf=fopen("C:\\Dynamix\\Tribes\\ogldbg.log","a"); if(_lf){ fprintf(_lf,"[OGL] renderer=%s | version=%s\n", pRenderer?pRenderer:"(null)", pVersion?pVersion:"(null)"); fclose(_lf);} }
 
    if (pVendor != NULL) {
       pRetSurf->m_pVendorString = new char[strlen(pVendor) + 1];
@@ -289,7 +286,6 @@ Surface::create(HWND        io_clientWnd,
    pRetSurf->setTransparency(false);
 
    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-   { FILE*_lf=fopen("C:\\Dynamix\\Tribes\\ogldbg.log","a"); if(_lf){ fprintf(_lf,"[OGL] Surface::create SUCCESS\n"); fclose(_lf);} }
 
    // We're ready to go...
    //
