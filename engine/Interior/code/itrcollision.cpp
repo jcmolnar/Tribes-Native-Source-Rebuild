@@ -754,7 +754,23 @@ bool ITRCollision::collide(const Box3F& box)
 	collisionList->stepVector.set(0,0,0);
 	collisionList->clear();
 	polyBSP.nodeList.clear();
-	polyBSP.nodeList.reserve(400);
+	// WASM-PORT (collision crash fix): collideBox() appends to nodeList and
+	// returns raw Node* into it, linking them into a tree that polyBSP.box()
+	// then walks. A convex region touches only a handful of planes, but a
+	// complex / non-convex interior can cluster far more than the old fixed
+	// 400 solid-node planes within the player's bounding sphere. Once the
+	// Vector grows past its reserved capacity it realloc()s (tVector.h
+	// resize()), moving the buffer and dangling every Node* already returned
+	// -> use-after-free crash in release, AssertFatal hang in a debug server.
+	// collideBox visits each BSP node at most once, so the true maximum it can
+	// append is nodeList+solidLeafList; reserve that up front so it can never
+	// reallocate. faceList holds a Face& across recursive split() calls
+	// (polyBSPClip.cpp) with the identical realloc-dangle hazard, and its depth
+	// is bounded by the clip-tree node count -- reserve it the same way.
+	int maxClipNodes = geometry->nodeList.size() +
+	                   geometry->solidLeafList.size() + 16;
+	polyBSP.nodeList.reserve(maxClipNodes);
+	polyBSP.faceList.reserve(maxClipNodes);
 	polyBSP.cptr = this;
 	if ((polyBSP.rootNode = collideBox(0)) != 0) {
 		if (!polyBSP.rootNode->plane) {
@@ -788,7 +804,7 @@ ITRCollision::ITRPolyBSPClip::Node* ITRCollision::collideBox(int nodeIndex)
 	   ITRGeometry::BSPLeafWrap leafWrap
 	   	(const_cast<ITRGeometry*>(geometry),-(nodeIndex+1));
 		if (leafWrap.isSolid()) {
-			AssertFatal(polyBSP.nodeList.size() < 400,
+			AssertFatal(polyBSP.nodeList.size() < polyBSP.nodeList.capacity(),
 				"ITRCollision::collideBox: Out of nodes");
 			polyBSP.nodeList.increment();
 			PolyBSPClip::Node& pnode = polyBSP.nodeList.last();
@@ -805,7 +821,7 @@ ITRCollision::ITRPolyBSPClip::Node* ITRCollision::collideBox(int nodeIndex)
 		float distance = m_dot(plane,center) + plane.d;
 
 		if (fabs(distance) < radius) {
-			AssertFatal(polyBSP.nodeList.size() < 400,
+			AssertFatal(polyBSP.nodeList.size() < polyBSP.nodeList.capacity(),
 				"ITRCollision::collideBox: Out of nodes");
 			ITRPolyBSPClip::Node *fn = collideBox(node.front);
 			ITRPolyBSPClip::Node *bn = collideBox(node.back);
