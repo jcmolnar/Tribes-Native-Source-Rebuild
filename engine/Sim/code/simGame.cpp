@@ -1086,6 +1086,20 @@ bool SimGame::processEvent(const SimEvent *event)
 
    if(ev->deviceType == SI_KEYBOARD && ev->deviceInst == 0 && ev->objType == SI_KEY)
    {
+      // NATIVE-PORT: ScriptGL text input. While a ScriptGL text field is
+      // focused (glTextInput(1)), forward keyboard makes to script and swallow
+      // the event here so action-map binds (move/weapon/...) don't fire while
+      // typing. This is the same point at which binds are dispatched, so
+      // consuming it is a clean, complete suppression. (defs in scriptGL.cpp)
+      extern bool ScriptGL_textInputActive();
+      extern void ScriptGL_handleKey(int ascii, int dikCode);
+      if (ScriptGL_textInputActive())
+      {
+         if (ev->action == SI_MAKE)
+            ScriptGL_handleKey((int)ev->ascii, (int)ev->objInst);
+         return (true);   // swallow make AND break - no bind, no key-repeat leak
+      }
+
       if (ev->ascii == '`' && ev->action == SI_MAKE)
       {
          sgcp->activate(sgcp->enabled() && !sgcp->active());

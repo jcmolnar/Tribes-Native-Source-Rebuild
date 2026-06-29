@@ -40,6 +40,47 @@ static void scriptGL_loadFont()
       sFont = SimResource::get(sManager)->load("sf_white_7.pft");
 }
 
+//---- ScriptGL text input ----------------------------------------------------
+// ScriptGL has no text input of its own (the original was draw-only). The
+// keyboard here is EXCLUSIVE DirectInput, so window messages never arrive and
+// an external tool can't suppress a keystroke from also firing a bind. So we
+// tap the engine's own key dispatch instead: when a script text field is
+// focused it calls glTextInput(1); SimGame::processEvent then forwards each
+// keyboard MAKE to ScriptGL_handleKey() and swallows it (so binds don't fire
+// while typing) - exactly how a focused engine edit control suppresses binds.
+//
+// We forward the actual CHARACTER (not the ascii code) to ScriptGL::onChar,
+// because TorqueScript can't turn a code back into a character. Non-printable
+// keys (Enter/Backspace/arrows/...) go to ScriptGL::onKey with the DIK code.
+static bool sTextInput = false;
+
+bool ScriptGL_textInputActive() { return sTextInput; }
+
+// ev gives us ascii (0 for non-text keys) + objInst (the DIK scancode).
+void ScriptGL_handleKey(int ascii, int dikCode)
+{
+   if(ascii >= 32 && ascii < 127)
+   {
+      // pass the literal char as a string; escape the two characters that
+      // would otherwise break the console string we're building
+      char buf[8]; int n = 0;
+      if(ascii == '\\' || ascii == '"') buf[n++] = '\\';
+      buf[n++] = (char)ascii; buf[n] = 0;
+      Console->evaluatef("ScriptGL::onChar(\"%s\");", buf);
+   }
+   else
+   {
+      Console->evaluatef("ScriptGL::onKey(%d);", dikCode);
+   }
+}
+
+static const char *c_glTextInput(CMDConsole*, int, int argc, const char **argv)
+{
+   // glTextInput(1) starts capturing keys to script; glTextInput(0) stops.
+   if(argc >= 2) sTextInput = (atoi(argv[1]) != 0);
+   return sTextInput ? "1" : "0";
+}
+
 //---- gl* console commands ---------------------------------------------------
 static const char *c_glColor(CMDConsole*, int, int argc, const char **argv)
 {
@@ -113,6 +154,7 @@ static void scriptGL_register()
    Console->addCommand(0, "glSetFont",             c_glSetFont);
    Console->addCommand(0, "glDrawString",          c_glDrawString);
    Console->addCommand(0, "glGetStringDimensions", c_glGetStringDimensions);
+   Console->addCommand(0, "glTextInput",           c_glTextInput);  // 1 = capture keys to ScriptGL::onChar/onKey
    Console->addCommand(0, "glDisable",             c_glNoop);
    Console->addCommand(0, "glEnable",              c_glNoop);
    Console->addCommand(0, "glBlendFunc",           c_glNoop);
