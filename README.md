@@ -53,10 +53,12 @@ This rebuild stands on the community reverse-engineering work that recovered the
 Tribes/Darkstar engine source:
 
 - **[leechristensen/TribesRebirth](https://github.com/leechristensen/TribesRebirth)**
-  — the upstream this project takes its bearings from (itself a fork of
-  **[AltimorTASDK/TribesRebirth](https://github.com/AltimorTASDK/TribesRebirth)**),
-  a Darkstar source tree set up to rebuild with the original Borland/TASM tools to
-  assist reverse engineering (IDA / Ghidra / BinDiff signature matching).
+  (a fork of **[AltimorTASDK/TribesRebirth](https://github.com/AltimorTASDK/TribesRebirth)**)
+  — a recovered Darkstar engine source tree. We take our bearings from it for the
+  engine source. Their build targets the original Borland/TASM toolchain (supplied
+  via a separate Docker image, not bundled); this project instead builds with
+  **modern MSVC**. The reverse-engineering tooling in our workflow — Ghidra scripts,
+  wire-format dumpers, the replay harness, the `_dbg/` debuggers — is ours.
 - The broader **TribesSource** community engine tree, from which this restructured
   `engine/ + program/ + inc/` layout and the MSVC build are derived.
 
