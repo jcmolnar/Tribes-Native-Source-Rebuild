@@ -708,7 +708,10 @@ void PlayerAddEvent::unpack(SimManager *manager, Net::PacketStream *ps, BitStrea
    manager;
    ps;
 
-   char buf[255];
+   char buf[256];   // NATIVE-PORT: was [255]. readString/readHuffBuffer writes buf[len]='\0'
+                    // for len up to 255 -> index 255, so a 255-char player name ran the
+                    // terminator 1 byte past the end of the stack buffer. Server-controlled
+                    // (fires on every player join).
 
    bs->read(&pr.id);
    pr.isBaseRepType = bs->readFlag();
@@ -806,7 +809,7 @@ void TeamAddEvent::unpack(SimManager *manager, Net::PacketStream *ps, BitStream 
 
 	bs->read (&teamRep.energy);
    bs->read(&teamRep.id);
-   char buf[255];
+   char buf[256];   // NATIVE-PORT: was [255]; readString can write buf[255]='\0' (1-byte overflow)
    bs->readString(buf);
    if(filterBadWords)
       languageFilter(buf);
@@ -863,7 +866,15 @@ void VoiceEvent::unpack(SimManager *manager, Net::PacketStream *ps, BitStream *b
    ps;
 
 	sourceId = bs->readInt(ClientIdSize) + 2048;
-   bs->readString(soundFileName);
+   // NATIVE-PORT: soundFileName is only 32 bytes, but readString/readHuffBuffer
+   // always writes up to 256 bytes (an 8-bit length prefix) into its target with
+   // NO bound. A server sending a VoiceEvent with a long filename smashed 224
+   // bytes past this stack event object. Read into a full-size scratch buffer and
+   // truncate into the fixed field (same cap the send side uses, line ~1986).
+   char vbuf[256];
+   bs->readString(vbuf);
+   strncpy(soundFileName, vbuf, sizeof(soundFileName) - 1);
+   soundFileName[sizeof(soundFileName) - 1] = 0;
    address.objectId = PlayerManagerId;
 }
 
