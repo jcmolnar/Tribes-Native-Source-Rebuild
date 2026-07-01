@@ -136,7 +136,10 @@ public:
 	virtual bool onSimCollisionImageQuery(SimCollisionImageQuery* query);
 	static void initPersistFields();
 	virtual bool setIsTarget(const bool in_isTarget);
-	virtual bool getTarget(Point3F* out_pTarget, int* out_pTeam);
+	// NATIVE-PORT: added const + override -- the base GameBase::getTarget is a
+	// const virtual, so the old non-const declaration HID it instead of
+	// overriding; virtual dispatch through GameBase* never reached this body.
+	bool getTarget(Point3F* out_pTarget, int* out_pTeam) const override;
 
 	virtual DamageState getState() const
 	{

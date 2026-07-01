@@ -293,7 +293,7 @@ TargetLaser::unpackUpdate(Net::GhostManager* gm,
 }
 
 bool
-TargetLaser::getTarget(Point3F* out_pTarget, int* out_pTeam)
+TargetLaser::getTarget(Point3F* out_pTarget, int* out_pTeam) const   // NATIVE-PORT: const to actually override
 {
    if (m_hitTarget == true) {
       *out_pTarget = m_endPoint;
@@ -303,6 +303,15 @@ TargetLaser::getTarget(Point3F* out_pTarget, int* out_pTeam)
    } else {
       return false;
    }
+}
+
+// NATIVE-PORT: was a throw-stub in the header. m_playerId is the owning
+// player's object id (readInt(10)+2048 off the ghost initial packet), the
+// same id space aiObj resolves via findPlayerObject before calling this.
+bool
+TargetLaser::wasShotBy(Player* player)
+{
+   return player != NULL && player->getId() == m_playerId;
 }
 
 bool

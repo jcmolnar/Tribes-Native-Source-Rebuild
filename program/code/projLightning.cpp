@@ -767,7 +767,7 @@ Lightning::LightningRenderImage::render(TS::RenderContext& io_rRC)
 
          Point3F tempArray[2];
          for (j = 0; j < numPoints; j++) {
-            Point3F linePoint = m_lines[i].getPoint(j, wg->currentTime, m_baseTransform, length);
+            Point3F linePoint = m_lines[i].getPoint(j, numPoints, wg->currentTime, m_baseTransform, length);   // NATIVE-PORT: pass count (OOB clamp)
             tempArray[0] = linePoint + (cross * (pLightning->m_pLightningData->beamWidth * 0.5f));
             tempArray[1] = linePoint - (cross * (pLightning->m_pLightningData->beamWidth * 0.5f));
             pArray->addPoints(2, tempArray);

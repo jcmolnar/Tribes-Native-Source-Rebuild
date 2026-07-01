@@ -617,12 +617,13 @@ StaticBase::setIsTarget(const bool in_isTarget)
 
 bool
 StaticBase::getTarget(Point3F* out_pTarget,
-                      int*     out_pTeam)
+                      int*     out_pTeam) const   // NATIVE-PORT: const to actually override
 {
    AssertFatal(isTarget() == true, "Shouldn't get this call if not a target");
 
    if (getState() == Enabled) {
-      *out_pTarget = getBoxCenter();
+      // SimContainer::getBoxCenter is (incorrectly) non-const; it only reads the bbox
+      *out_pTarget = const_cast<StaticBase*>(this)->getBoxCenter();
       *out_pTeam   = getTeam();
 
       return true;

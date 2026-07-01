@@ -448,9 +448,15 @@ public:
 	{
 		throw std::exception();
 	}
+	// NATIVE-PORT: was an unimplemented stub (throw std::exception()). The
+	// crosshair / commander-map seeker loops call this virtually on EVERY
+	// member of the TargetableSet each frame, so a single targetable ghost
+	// (turret, sensor, target laser) in scope crashed the client -- doubly so
+	// because the StaticBase/TargetLaser "overrides" were non-const and only
+	// HID this const virtual (fixed there too). "Not a target" = false.
 	virtual bool getTarget(Point3F* const targetPoint, int* team) const
 	{
-		throw std::exception();
+		return false;
 	}
 
 	virtual void getThrowVector(Point3F* pos, Point3F* vec);

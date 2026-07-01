@@ -61,14 +61,25 @@ public:
 			{				
 			}
 
-			Point3F getPoint(int i, DWORD currentTime, const TMat3F& mat3F, float length)
+			// NATIVE-PORT: takes the point count so the i+1 read can be clamped.
+			// The render loops call this for i = 0..numPoints-1, so the old
+			// unconditional m_points[i + 1] read went one PAST the end of the
+			// new Point3F[numPoints] array on the last point of every beam --
+			// a heap OOB read every frame a lightning/repair beam rendered.
+			// Also guard a zero/negative time range (div-by-zero -> inf/NaN).
+			Point3F getPoint(int i, int numPoints, DWORD currentTime, const TMat3F& mat3F, float length)
 			{
+				if (m_points == nullptr || numPoints <= 0)
+					return Point3F(0, 0, 0);
+				if (i >= numPoints)
+					i = numPoints - 1;
+
 				const float progress = currentTime - createTime;
 				const float range = endTime - createTime;
-				float ratio = progress / range;
+				float ratio = (range > 0.0f) ? (progress / range) : 1.0f;
 
 				Point3F start = m_points[i];
-				Point3F end = m_points[i + 1];
+				Point3F end = m_points[(i + 1 < numPoints) ? i + 1 : i];
 
 				Point3F result(
 					(start.x * (1.0 - ratio) + end.x * ratio) * length,

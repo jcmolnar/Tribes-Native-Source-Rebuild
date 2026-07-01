@@ -56,10 +56,13 @@ public:
 	void readInitialPacket(Net::GhostManager* gm, BitStream* pStream);
 	DWORD packUpdate(Net::GhostManager* gm, DWORD mask, BitStream* pStream);
 	void unpackUpdate(Net::GhostManager* gm, BitStream* pStream);
-	bool getTarget(Point3F* out_pTarget, int* out_pTeam);
+	// NATIVE-PORT: added const + override -- the base GameBase::getTarget is a
+	// const virtual, so the old non-const declaration HID it instead of
+	// overriding; virtual dispatch through GameBase* never reached this body.
+	bool getTarget(Point3F* out_pTarget, int* out_pTeam) const override;
 	bool isSustained() const;
-	bool wasShotBy(Player* player)
-	{
-		throw std::exception();
-	}
+	// NATIVE-PORT: was an unimplemented stub (throw std::exception()) -> crash
+	// when the AI targeting loop (aiObj.cpp) checked laser ownership. The
+	// owning player's id is m_playerId (read off the ghost initial packet).
+	bool wasShotBy(Player* player);   // defined in projTargetLaser.cpp (needs Player complete)
 };
